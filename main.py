@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.core.settings import settings
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.features import register_routers
+
 app = FastAPI(
     title="Mathery API"
 )
@@ -14,6 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+register_routers(app)
+
 @app.get("/")
 def read_root():
-    return {"message": "Hello Mathery!"}
+    return {"message": "Hello Mathesry!"}
