@@ -93,6 +93,8 @@ export function ChatArea() {
         const message = currentMessage.trim()
         setCurrentMessage("")
         await sendChatMessage(message)
+
+
     }
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

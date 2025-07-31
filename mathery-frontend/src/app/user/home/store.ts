@@ -4,6 +4,7 @@ import { create } from "zustand"
 import type { AxiosError } from "axios"
 import type { MatheryConversation, MatheryMessage, SortBy, SortOrder, WebSocketMessage } from "./types"
 import {createConversation, getConversations, getMessages, sendMessage} from "@/app/user/home/service/matheryService";
+import Cookies from "js-cookie";
 
 interface MatheryState {
     // Conversations
@@ -161,9 +162,6 @@ export const useMatheryStore = create<MatheryState>((set, get) => ({
                 messagesPage: 1,
             }))
 
-            // Send the first message
-            await get().sendChatMessage(message)
-            get().connectWebSocket(newConversation.mathery_uuid)
         } catch (error) {
             const err = error as AxiosError<{ detail: string }>
             console.error(err.response?.data.detail || "Failed to create conversation")
@@ -237,31 +235,29 @@ export const useMatheryStore = create<MatheryState>((set, get) => ({
     setCurrentMessage: (message) => set({ currentMessage: message }),
 
     sendChatMessage: async (message: string) => {
-        const { selectedConversation } = get()
-        if (!selectedConversation) return
-
-        try {
-            // Add user message immediately
-            const userMessage: MatheryMessage = {
-                mathery_convo_id: Date.now(), // Temporary ID
-                message,
-                type: "TEXT",
-                role: "USER",
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                deleted_at: null,
-            }
-
-            get().addMessage(userMessage)
-            set({ currentMessage: "", isStreaming: true, streamingMessage: "" })
-
-            await sendMessage(selectedConversation.mathery_uuid, { message })
-        } catch (error) {
-            const err = error as AxiosError<{ detail: string }>
-            console.error(err.response?.data.detail || "Failed to send message")
-            set({ isStreaming: false })
+        const ws = get().websocket
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn("WebSocket not open!")
+            return
         }
+
+        // optimistically show the user’s message
+        const userMsg: MatheryMessage = {
+            mathery_convo_id: Date.now(),
+            message,
+            type: "TEXT",
+            role: "USER",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            deleted_at: null,
+        }
+        get().addMessage(userMsg)
+        set({ currentMessage: "", isStreaming: true, streamingMessage: "" })
+
+        // send it over the socket (exactly like Postman)
+        ws.send(JSON.stringify({ message }))
     },
+
 
     connectWebSocket: (matheryUuid: string) => {
         const { websocket } = get()
@@ -273,8 +269,10 @@ export const useMatheryStore = create<MatheryState>((set, get) => ({
 
         // const ws = new WebSocket(`wss://mathery-api.thirdygayares.com/ws/mathery/${matheryUuid}/convo`)
 
-        const ws = new WebSocket(`ws://localhost:8000/ws/mathery/${matheryUuid}/convo`)
-
+        const token = Cookies.get("token")
+        const ws = new WebSocket(
+            `wss://mathery-api.thirdygayares.com/ws/mathery/${matheryUuid}/convo?token=${token}`
+        )
         ws.onopen = () => {
             set({ connectionStatus: "connected" })
         }

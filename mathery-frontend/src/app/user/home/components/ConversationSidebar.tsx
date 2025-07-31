@@ -11,6 +11,7 @@ import { useMatheryStore } from "../store"
 import { useSearchDebounce } from "@/hooks/useSearchDebounce"
 import { ConversationCard } from "./ConversationCard"
 import { NewConversationDialog } from "./NewConversationDialog"
+import MenuDropdwon from "@/components/layout/MenuDropdwon";
 
 export function ConversationSidebar() {
     const [showNewDialog, setShowNewDialog] = useState(false)
@@ -71,7 +72,8 @@ export function ConversationSidebar() {
             {/* Header */}
             <div className="p-4 border-b border-blue-100">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-blue-900">Conversations</h2>
+                    <MenuDropdwon/>
+
                     <Button
                         onClick={() => setShowNewDialog(true)}
                         size="sm"

@@ -18,7 +18,6 @@ const UserLayout = ({ children }: UserLayoutProps) => {
         <UserGuard>
 
                     <div className="flex  w-full">
-                        <MenuDropdwon/>
                             <main className="flex-1 overflow-auto">
                                 <div className="mx-auto max-w-7xl">
                                     {children}

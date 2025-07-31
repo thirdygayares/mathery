@@ -57,8 +57,6 @@ export function MessageCard({ message, isStreaming = false }: MessageCardProps) 
                     <div className="space-y-2">
                         {/* Message content */}
                         <div className={`prose prose-sm max-w-none ${isUser ? "prose-invert" : "prose-blue"}`}>
-                            {message.type === "MD" || message.type === "TEXT" ? (
-                                message.type === "TEXT" ? (
                                     <ReactMarkdown
                                         remarkPlugins={[remarkMath]}
                                         rehypePlugins={[rehypeKatex]}
@@ -95,12 +93,7 @@ export function MessageCard({ message, isStreaming = false }: MessageCardProps) 
                                     >
                                         {message.message}
                                     </ReactMarkdown>
-                                ) : (
-                                    <p className="whitespace-pre-wrap">{message.message}</p>
-                                )
-                            ) : (
-                                <p className="whitespace-pre-wrap">{message.message}</p>
-                            )}
+
 
                             {/* Streaming cursor */}
                             {isStreaming && <span className="inline-block w-2 h-4 bg-blue-600 animate-pulse ml-1" />}
