@@ -10,7 +10,7 @@ import type {
 export const getConversations = async (
     params: ConversationFilterParams,
 ): Promise<PaginatedResponse<MatheryConversation>> => {
-    const response = await axios.get("/api/mathery", { params })
+    const response = await axios.get("/api/mathery/", { params })
     return response.data
 }
 
@@ -32,7 +32,7 @@ export const createConversation = async (payload: {
     name: string
     summary: string
 }): Promise<MatheryConversation> => {
-    const response = await axios.post("/api/mathery", payload)
+    const response = await axios.post("/api/mathery/", payload)
     return response.data
 }
 
