@@ -8,6 +8,8 @@ from app.features.mathery.service.create_convo_service import create_convo_servi
 from app.features.mathery.service.create_matery_service import create_mathery_service
 from app.features.mathery.service.fetch_convo_service import fetch_convo_service
 from app.features.mathery.service.fetch_mathery_service import fetch_mathery_service
+from app.features.mathery.service.mathery_tutor_service import mathery_tutor_service
+from fastapi.responses import StreamingResponse
 
 router = APIRouter(
     prefix="/api/mathery",
@@ -73,3 +75,13 @@ async def fetch_conversation(
     filtered and truncated per query parameters.
     """
     return result
+
+@router.post(
+    "{mathery_uuid}/chat",
+    status_code=status.HTTP_200_OK,
+    summary="Agentic math tutor chat (streaming)",
+)
+def tutor_chat(
+    response = Depends(mathery_tutor_service),
+):
+    return StreamingResponse(response, media_type="application/json")
