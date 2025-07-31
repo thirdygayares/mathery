@@ -1,5 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, status, Path, Body
+
+from app.features.mathery.schema.convo_schema import ConvoMessageResponse, ConvoMessageRequest
 from app.features.mathery.schema.mathery_schema import CreateMatheryRequest, MatheryResponse, FetchMatheryResponse
+from app.features.mathery.service.create_convo_service import create_convo_service
 from app.features.mathery.service.create_matery_service import create_mathery_service
 from app.features.mathery.service.fetch_mathery_service import fetch_mathery_service
 
@@ -33,4 +38,21 @@ async def create_mathery(
 async def list_mathery(
     result=Depends(fetch_mathery_service),
 ):
+    return result
+
+
+@router.post(
+    "/{mathery_uuid}/convo",
+    response_model=ConvoMessageResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Send a message in this Mathery session",
+)
+async def send_convo_message(
+    mathery_uuid: UUID = Path(..., description="Mathery session UUID"),
+    payload: ConvoMessageRequest =  Body(..., description="The user’s chat message"),
+    result = Depends(create_convo_service),
+):
+    """
+    Persist a USER message to the Mathery conversation.
+    """
     return result
