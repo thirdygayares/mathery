@@ -108,7 +108,7 @@ class Exercise(SQLModel, table=True):
     exercise_id: Optional[int] = Field(default=None, primary_key=True)
     exercise_uuid: uuid.UUID = Field(default_factory=uuid.uuid4, index=True, unique=True)
     user_id: int = Field(foreign_key="user.user_id")
-    topic_id: int = Field(foreign_key="topic.topic_id")
+    topic_id: Optional[int] = Field(default=None, foreign_key="topic.topic_id")
     name: str
     summary: str
     results_summary: Optional[str] = None
@@ -163,7 +163,7 @@ class Mathery(SQLModel, table=True):
     mathery_id: Optional[int] = Field(default=None, primary_key=True)
     mathery_uuid: uuid.UUID = Field(default_factory=uuid.uuid4, index=True, unique=True)
     user_id: int = Field(foreign_key="user.user_id")
-    topic_id: int = Field(foreign_key="topic.topic_id")
+    topic_id: Optional[int] = Field(default=None, foreign_key="topic.topic_id")
     name: str
     summary: str
     created_at: datetime = Field(default_factory=lambda:  datetime.now(datetime.UTC))
