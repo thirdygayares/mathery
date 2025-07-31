@@ -5,7 +5,7 @@ from app.core.jwt_token import create_jwt_token
 
 from app.core.hashing import Hasher
 from app.features.auth.crud.create_user_crud import create_user_crud
-from app.features.auth.schema.user_schema import RegisterUserRequest, TokenResponse
+from app.features.auth.schema.auth_schema import RegisterUserRequest, TokenResponse
 
 
 async def create_user_service(
