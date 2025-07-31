@@ -27,11 +27,10 @@ async def convo_ws(websocket: WebSocket, mathery_uuid: UUID):
     await websocket.accept()
 
     # — manual auth —
-    auth = websocket.headers.get("authorization","")
-    if not auth.lower().startswith("bearer "):
+    token = websocket.query_params.get("token")
+    if not token:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
-    token = auth.split(" ",1)[1]
     try:
         user_claims = get_current_user(token)
         user_uuid    = user_claims["sub"]
