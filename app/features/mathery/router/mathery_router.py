@@ -2,10 +2,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status, Path, Body
 
-from app.features.mathery.schema.convo_schema import ConvoMessageResponse, ConvoMessageRequest
+from app.features.mathery.schema.convo_schema import ConvoMessageResponse, FetchConvoResponse, ConvoMessageRequest
 from app.features.mathery.schema.mathery_schema import CreateMatheryRequest, MatheryResponse, FetchMatheryResponse
 from app.features.mathery.service.create_convo_service import create_convo_service
 from app.features.mathery.service.create_matery_service import create_mathery_service
+from app.features.mathery.service.fetch_convo_service import fetch_convo_service
 from app.features.mathery.service.fetch_mathery_service import fetch_mathery_service
 
 router = APIRouter(
@@ -54,5 +55,21 @@ async def send_convo_message(
 ):
     """
     Persist a USER message to the Mathery conversation.
+    """
+    return result
+
+
+@router.get(
+    "/{mathery_uuid}/convo",
+    response_model=FetchConvoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Fetch paginated conversation history with optional search",
+)
+async def fetch_conversation(
+    result=Depends(fetch_convo_service),
+):
+    """
+    Returns the current summary plus a paginated window of messages,
+    filtered and truncated per query parameters.
     """
     return result
