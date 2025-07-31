@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  mathery_api_prod:
+    image: mathery-api-prod:latest
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env
+    environment:
+      - ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 3G
+    restart: unless-stopped
+    networks:
+      - my_network_prod
+
+networks:
+  my_network_prod:
+    driver: bridge
