@@ -1,12 +1,26 @@
+"use client"
 
+import { useEffect } from "react"
+import { ConversationSidebar } from "./components/ConversationSidebar"
+import { ChatArea } from "./components/ChatArea"
+import {useMatheryStore} from "@/app/user/home/store";
 
-const Home = () => {
+export default function UserHomePage() {
+    const { fetchConversations, disconnectWebSocket } = useMatheryStore()
+
+    useEffect(() => {
+        fetchConversations()
+
+        // Cleanup WebSocket on unmount
+        return () => {
+            disconnectWebSocket()
+        }
+    }, [fetchConversations, disconnectWebSocket])
+
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Mathery!</h1>
-        <p className="text-lg text-gray-600">Your personal math tutor assistant.</p>
+        <div className="h-screen flex bg-gradient-to-br from-slate-50 to-blue-50">
+            <ConversationSidebar />
+            <ChatArea />
         </div>
-    );
+    )
 }
-
-export default Home;
